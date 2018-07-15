@@ -1,0 +1,28 @@
+upstream xxxx {
+  server xxxx;
+}
+
+limit_req_zone $binary_remote_addr zone=infocentralint:10m rate=10r/s;
+
+server {
+    server_name xxxx;
+
+    listen xxxx;
+
+    access_log /var/log/nginx/xxxx.access.log;
+    error_log /var/log/nginx/xxxx.error.log;
+    client_max_body_size 32k;
+
+    location /xxxx {
+        limit_req zone=infocentralint burst=20 nodelay;
+        proxy_pass xxxx;
+        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+        proxy_redirect off;
+        proxy_buffering on;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+        proxy_set_header Host            $host;
+        proxy_set_header X-Real-IP       $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
